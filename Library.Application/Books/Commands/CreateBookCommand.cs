@@ -1,4 +1,3 @@
-using Library.Application.Books.Events;
 using Library.Application.Repositories;
 using Library.Domain.Aggregates;
 using Library.Domain.Common.CQRS;
@@ -33,13 +32,6 @@ public class CreateBookCommandHandler(
         );
 
         bookRepository.Add(book);
-
-        await mediator.Publish(new BookCreatedEvent
-        {
-            BookId = book.Id,
-            AuthorId = book.AuthorId,
-            Genre = book.Genre
-        }, cancellationToken);
 
         return book.Id;
     }

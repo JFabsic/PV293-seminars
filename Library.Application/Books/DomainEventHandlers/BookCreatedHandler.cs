@@ -1,24 +1,18 @@
 using Library.Application.Repositories;
 using Library.Domain.Common.CQRS;
+using Library.Domain.DomainEvents;
 
-namespace Library.Application.Books.Events;
-
-public class BookCreatedEvent : IDomainEvent
-{
-    public Guid BookId { get; set; }
-    public Guid AuthorId { get; set; }
-    public string Genre { get; set; } = string.Empty;
-}
+namespace Library.Application.Books.DomainEventHandlers;
 
 public class BookCreatedEventHandler(
     IBookRepository bookRepository,
     IAuthorRepository authorRepository
-    ) : IDomainEventHandler<BookCreatedEvent>
+    ) : IDomainEventHandler<BookCreated>
 {
-    public async Task Handle(BookCreatedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(BookCreated domainEvent, CancellationToken cancellationToken)
     {
         // Update author statistics
-        var author = await authorRepository.GetByIdAsync(notification.AuthorId);
+        var author = await authorRepository.GetByIdAsync(domainEvent.AuthorId);
 
         if (author == null)
             return;

@@ -1,4 +1,5 @@
 using Library.Domain.Common;
+using Library.Domain.DomainEvents;
 
 namespace Library.Domain.Aggregates;
 
@@ -14,14 +15,19 @@ public class Book : AggregateRoot
 
     // Foreign key
     public Guid AuthorId { get; private set; }
+
     // Navigation property
     public Author Author { get; set; } = null!;
 
     // Private constructor for EF Core
-    private Book() : base() { }
+    private Book() : base()
+    {
+    }
 
     // Constructor with ID for seeding
-    private Book(Guid id) : base(id) { }
+    private Book(Guid id) : base(id)
+    {
+    }
 
     // Factory method for creating a new book
     public static Book Create(string title, string isbn, int year, int pages, string genre, Guid authorId)
@@ -41,8 +47,15 @@ public class Book : AggregateRoot
             Genre = genre,
             AuthorId = authorId,
             CreatedAt = DateTime.UtcNow,
-            IsAvailable = true // New books are available by default
+            IsAvailable = true, // New books are available by default
         };
+
+        book.RaiseDomainEvent(new BookCreated
+        {
+            BookId = book.Id,
+            AuthorId = book.AuthorId,
+            Genre = book.Genre,
+        });
 
         return book;
     }
