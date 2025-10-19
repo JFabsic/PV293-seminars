@@ -52,7 +52,10 @@ The project has been refactored from **3-layer architecture** to **Clean Archite
 
 ### 3. Domain Events Publishing
 
-- Domain events are **automatically published** in overridden `SaveChangesAsync()` in [ApplicationDbContext](Infrastructure/Data/ApplicationDbContext.cs)
+- Domain events are **raised in aggregates** using `RaiseDomainEvent()` method (e.g., `BookCreated` event in [Book.cs](Library.Domain/Aggregates/Book.cs))
+- Domain events are defined in [Library.Domain/DomainEvents/](Library.Domain/DomainEvents/)
+- Events are **automatically published** in overridden `SaveChangesAsync()` in [ApplicationDbContext](Library.Infrastructure/Data/ApplicationDbContext.cs)
+- Event handlers are in Application layer (e.g., [BookCreatedHandler.cs](Library.Application/Authors/DomainEventHandlers/BookCreatedHandler.cs))
 - Flow: Aggregate raises event → SaveChanges collects and publishes via MediatR → Event handlers respond
 
 ### 4. Refactored EF Core Configurations
