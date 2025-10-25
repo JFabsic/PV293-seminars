@@ -26,7 +26,6 @@ The project has been refactored from **3-layer architecture** to **Clean Archite
 - **Library.Application** - Application layer
 
   - Commands, queries, and handlers (CQRS pattern)
-  - Repository interfaces defined here
   - Depends only on Domain
 
 - **Library.Infrastructure** - Infrastructure layer
@@ -44,6 +43,34 @@ The project has been refactored from **3-layer architecture** to **Clean Archite
 - Clean dependency flow (dependencies point inward toward Domain)
 - Domain logic is isolated and testable
 - Infrastructure can be easily swapped without affecting business logic
+
+### 1.1. Specification Pattern
+
+The **Specification Pattern** encapsulates query logic into reusable, testable specification classes in the Domain layer.
+
+**Example:**
+
+```csharp
+// Before: Query logic scattered everywhere
+var overdueLoans = dbContext.Loans.Where(l => l.Status == LoanStatus.Active && l.DueDate < DateTime.UtcNow)
+                                   .OrderBy(l => l.DueDate);
+
+// After: Reusable specification
+var spec = new OverdueLoansSpec();
+var overdueLoans = await repository.ListAsync(spec);
+```
+
+**Key Advantages:**
+
+- **Reusable** - Write query logic once, use everywhere
+- **Testable** - Test specifications in isolation without a database
+- **Domain-driven** - Specifications live in Domain layer, preventing domain logic leakage to Infrastructure
+
+**Implementation:**
+
+- Specifications: [Library.Domain/Specifications/](Library.Domain/Specifications/)
+- Tests: [Library.Tests/Domain/Specifications/](Library.Tests/Domain/Specifications/)
+- Uses [Ardalis.Specification](https://github.com/ardalis/Specification) library
 
 ### 2. Base Classes for Entities and Aggregates
 
