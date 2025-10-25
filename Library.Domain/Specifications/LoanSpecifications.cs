@@ -22,7 +22,7 @@ public sealed class ActiveLoanByBookSpec : Specification<Loan>, ISingleResultSpe
 /// </summary>
 public sealed class OverdueLoansSpec : Specification<Loan>
 {
-    public OverdueLoansSpec(int? minimumDaysOverdue = null, bool includeReturned = false)
+    public OverdueLoansSpec(int? minimumDaysOverdue = null)
     {
         var now = DateTime.UtcNow;
 
@@ -33,14 +33,6 @@ public sealed class OverdueLoansSpec : Specification<Loan>
         {
             var cutoffDate = now.AddDays(-minimumDaysOverdue.Value);
             Query.Where(l => l.DueDate <= cutoffDate);
-        }
-
-        if (includeReturned)
-        {
-            // Include returned loans that had late returns (have late fees)
-            // This requires checking if the loan has fines
-            // Note: In a real scenario, you might need to use AsNoTracking or separate queries
-            // for performance with large datasets
         }
 
         // Order by most overdue first
