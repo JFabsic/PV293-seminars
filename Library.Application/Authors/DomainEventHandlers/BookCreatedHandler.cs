@@ -1,12 +1,14 @@
-using Library.Application.Repositories;
+using Library.Domain.Repositories;
+using Library.Domain.Aggregates;
 using Library.Domain.Common.CQRS;
 using Library.Domain.DomainEvents;
+using Library.Domain.Specifications;
 
 namespace Library.Application.Authors.DomainEventHandlers;
 
 public class BookCreatedEventHandler(
-    IBookRepository bookRepository,
-    IAuthorRepository authorRepository
+    IRepository<Book> bookRepository,
+    IRepository<Author> authorRepository
     ) : IDomainEventHandler<BookCreated>
 {
     public async Task Handle(BookCreated domainEvent, CancellationToken cancellationToken)
@@ -19,9 +21,10 @@ public class BookCreatedEventHandler(
         author.TotalBooksPublished++;
         author.LastPublishedDate = DateTime.UtcNow;
 
-        var mostPopularGenre = await bookRepository.GetBooksByAuthorIdAsync(author.Id);
+        var booksByAuthorSpec = new BooksByAuthorSpec(author.Id);
+        var authorBooks = await bookRepository.ListAsync(booksByAuthorSpec, cancellationToken);
 
-        author.MostPopularGenre = mostPopularGenre
+        author.MostPopularGenre = authorBooks
             .GroupBy(b => b.Genre)
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)

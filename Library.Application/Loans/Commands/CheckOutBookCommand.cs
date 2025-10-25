@@ -1,10 +1,9 @@
 using System.Security.Claims;
-using Library.Application.Repositories;
-using Library.Domain.Aggregates;
+using Library.Domain.Repositories;
 using Library.Domain.Aggregates.Loan;
 using Library.Domain.Common.CQRS;
+using Library.Domain.Services;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Library.Application.Loans.Commands;
 
@@ -17,9 +16,8 @@ public record CheckOutBookCommand : ICommand<Guid>
 }
 
 public class CheckOutBookCommandHandler(
-    ILoanRepository loanRepository,
-    IBookRepository bookRepository,
-    UserManager<ApplicationUser> userManager)
+    IRepository<Loan> loanRepository,
+    ILoanService loanService)
     : IRequestHandler<CheckOutBookCommand, Guid>
 {
     public async Task<Guid> Handle(CheckOutBookCommand command, CancellationToken cancellationToken)
@@ -27,27 +25,16 @@ public class CheckOutBookCommandHandler(
         if (command.User == null)
             throw new InvalidOperationException("User context is required");
 
-        var book = await bookRepository.GetByIdAsync(command.BookId);
-        if (book == null)
-            throw new InvalidOperationException($"Book with ID {command.BookId} not found");
-
-        var existingLoan = await loanRepository.GetActiveLoanByBookIdAsync(command.BookId);
-        if (existingLoan != null)
-            throw new InvalidOperationException($"Book is already checked out");
-
-        var actualBorrowerId = Loan.DetermineBorrowerId(command.BorrowerId, command.User);
-
-        var borrower = await userManager.FindByIdAsync(actualBorrowerId.ToString())
-            ?? throw new InvalidOperationException($"User with ID {actualBorrowerId} not found");
-
-        var loan = Loan.Create(
+        // Delegate to domain service (which handles fetching data and business logic)
+        var loan = await loanService.CheckOutBookAsync(
             command.BookId,
-            actualBorrowerId,
-            borrower.FullName,
-            borrower.Email ?? string.Empty,
-            command.LoanDurationDays
+            command.BorrowerId,
+            command.User,
+            command.LoanDurationDays,
+            cancellationToken
         );
 
+        // Persist the loan (Book will be updated via domain event)
         loanRepository.Add(loan);
 
         return loan.Id;

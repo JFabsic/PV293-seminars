@@ -1,4 +1,4 @@
-using Library.Application.Repositories;
+using Library.Domain.Repositories;
 using Library.Domain.Aggregates;
 using Library.Domain.Common.CQRS;
 using MediatR;
@@ -16,7 +16,7 @@ public class CreateBookCommand : ICommand<Guid>
 }
 
 public class CreateBookCommandHandler(
-    IBookRepository bookRepository,
+    IRepository<Book> bookRepository,
     IMediator mediator)
     : IRequestHandler<CreateBookCommand, Guid>
 {

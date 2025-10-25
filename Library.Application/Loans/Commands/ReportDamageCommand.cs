@@ -1,4 +1,5 @@
-﻿using Library.Application.Repositories;
+﻿using Library.Domain.Repositories;
+using Library.Domain.Aggregates.Loan;
 using Library.Domain.Common.CQRS;
 using Library.Domain.ValueObjects;
 using MediatR;
@@ -13,7 +14,7 @@ public record ReportDamageCommand : ICommand
 }
 
 public class ReportDamageCommandHandler(
-    ILoanRepository loanRepository
+    IRepository<Loan> loanRepository
     ) : IRequestHandler<ReportDamageCommand>
 {
     public async Task Handle(ReportDamageCommand request, CancellationToken cancellationToken)

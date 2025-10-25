@@ -1,14 +1,16 @@
 using FluentValidation;
-using Library.Application.Repositories;
+using Library.Domain.Repositories;
+using Library.Domain.Aggregates;
+using Library.Domain.Specifications;
 
 namespace Library.Application.Books.Commands;
 
 public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 {
-    private readonly IBookRepository _bookRepository;
-    private readonly IAuthorRepository _authorRepository;
+    private readonly IRepository<Book> _bookRepository;
+    private readonly IRepository<Author> _authorRepository;
 
-    public CreateBookCommandValidator(IBookRepository bookRepository, IAuthorRepository authorRepository)
+    public CreateBookCommandValidator(IRepository<Book> bookRepository, IRepository<Author> authorRepository)
     {
         _bookRepository = bookRepository;
         _authorRepository = authorRepository;
@@ -46,7 +48,8 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 
     private async Task<bool> IsUniqueIsbn(string isbn, CancellationToken cancellationToken)
     {
-        var existingBook = await _bookRepository.GetBookByIsbnAsync(isbn);
+        var specification = new BookByIsbnSpec(isbn);
+        var existingBook = await _bookRepository.FirstOrDefaultAsync(specification, cancellationToken);
         return existingBook == null;
     }
 }

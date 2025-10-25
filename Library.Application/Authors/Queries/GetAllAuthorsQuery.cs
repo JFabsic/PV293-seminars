@@ -1,5 +1,6 @@
 using Library.Application.Dtos;
-using Library.Application.Repositories;
+using Library.Domain.Repositories;
+using Library.Domain.Aggregates;
 using Library.Domain.Common.CQRS;
 using MediatR;
 
@@ -8,12 +9,12 @@ namespace Library.Application.Authors.Queries;
 public class GetAllAuthorsQuery : IQuery<List<AuthorDto>>;
 
 public class GetAllAuthorsQueryHandler(
-    IAuthorRepository authorRepository
+    IRepository<Author> authorRepository
     ) : IRequestHandler<GetAllAuthorsQuery, List<AuthorDto>>
 {
     public async Task<List<AuthorDto>> Handle(GetAllAuthorsQuery query, CancellationToken cancellationToken)
     {
-        var authors = await authorRepository.GetAllAsync(cancellationToken);
+        var authors = await authorRepository.GetAllAsync();
 
         return authors
             .Select(author => new AuthorDto

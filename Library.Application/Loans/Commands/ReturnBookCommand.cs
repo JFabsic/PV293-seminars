@@ -1,4 +1,5 @@
-using Library.Application.Repositories;
+using Library.Domain.Repositories;
+using Library.Domain.Aggregates.Loan;
 using Library.Domain.Common.CQRS;
 using MediatR;
 
@@ -10,7 +11,7 @@ public record ReturnBookCommand : ICommand
 }
 
 public class ReturnBookCommandHandler(
-    ILoanRepository loanRepository
+    IRepository<Loan> loanRepository
 ) : IRequestHandler<ReturnBookCommand>
 {
     public async Task Handle(ReturnBookCommand request, CancellationToken cancellationToken)

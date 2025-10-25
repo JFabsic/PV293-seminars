@@ -5,7 +5,6 @@ using Library.API.Middleware;
 using Library.Application.Books.Commands;
 using Library.BusinessLayer.Middleware;
 using Library.Infrastructure.Data;
-using Library.Application.Repositories;
 using Library.Domain.Aggregates;
 using Library.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -105,11 +104,11 @@ builder.Services.AddAuthentication(options =>
 // Add Authorization
 builder.Services.AddAuthorization();
 
-// Register Repositories
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-builder.Services.AddScoped<ILoanRepository, LoanRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+// Register Generic Repository
+builder.Services.AddScoped(typeof(Library.Domain.Repositories.IRepository<>), typeof(Repository<>));
+
+// Register Domain Services
+builder.Services.AddScoped<Library.Domain.Services.ILoanService, Library.Domain.Services.LoanService>();
 
 // Register FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<CreateBookCommand>();

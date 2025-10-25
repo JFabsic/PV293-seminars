@@ -1,4 +1,5 @@
-﻿using Library.Application.Repositories;
+﻿using Library.Domain.Repositories;
+using Library.Domain.Aggregates.Loan;
 using Library.Domain.Common.CQRS;
 using MediatR;
 
@@ -11,7 +12,7 @@ public record ExtendLoanDueDateCommand : ICommand
 }
 
 public class ExtendLoanDueDateCommandHandler(
-    ILoanRepository loanRepository
+    IRepository<Loan> loanRepository
     ) : IRequestHandler<ExtendLoanDueDateCommand>
 {
     public async Task Handle(ExtendLoanDueDateCommand request, CancellationToken cancellationToken)

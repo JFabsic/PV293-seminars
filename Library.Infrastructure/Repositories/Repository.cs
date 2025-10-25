@@ -1,15 +1,18 @@
 using System.Linq.Expressions;
-using Library.Application.Repositories;
+using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
+using Library.Domain.Repositories;
+using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-    protected readonly DbContext Context;
+    protected readonly ApplicationDbContext Context;
     protected readonly DbSet<TEntity> Entities;
 
-    public Repository(DbContext context)
+    public Repository(ApplicationDbContext context)
     {
         Context = context;
         Entities = Context.Set<TEntity>();
@@ -38,6 +41,49 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     public virtual async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await Entities.SingleOrDefaultAsync(predicate);
+    }
+
+    // Specification-based query methods
+    public virtual async Task<TEntity?> FirstOrDefaultAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        return await Entities
+            .WithSpecification(specification)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public virtual async Task<IEnumerable<TEntity>> ListAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        return await Entities
+            .WithSpecification(specification)
+            .ToListAsync(cancellationToken);
+    }
+
+    public virtual async Task<bool> AnyAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        return await Entities
+            .WithSpecification(specification)
+            .AnyAsync(cancellationToken);
+    }
+
+    public virtual async Task<int> CountAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        return await Entities
+            .WithSpecification(specification)
+            .CountAsync(cancellationToken);
+    }
+
+    public virtual async Task<TResult?> FirstOrDefaultAsync<TResult>(ISpecification<TEntity, TResult> specification, CancellationToken cancellationToken = default)
+    {
+        return await Entities
+            .WithSpecification(specification)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public virtual async Task<IEnumerable<TResult>> ListAsync<TResult>(ISpecification<TEntity, TResult> specification, CancellationToken cancellationToken = default)
+    {
+        return await Entities
+            .WithSpecification(specification)
+            .ToListAsync(cancellationToken);
     }
 
     public virtual void Add(TEntity entity)

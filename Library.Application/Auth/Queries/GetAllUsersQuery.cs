@@ -1,6 +1,8 @@
-using Library.Application.Repositories;
+using Library.Domain.Repositories;
+using Library.Domain.Aggregates;
 using Library.Domain.Common.CQRS;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace Library.Application.Auth.Queries;
 
@@ -19,18 +21,19 @@ public class UserDto
 }
 
 public class GetAllUsersQueryHandler(
-    IUserRepository userRepository
+    IRepository<ApplicationUser> userRepository,
+    UserManager<ApplicationUser> userManager
     )
     : IRequestHandler<GetAllUsersQuery, List<UserDto>>
 {
     public async Task<List<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
-        var users = await userRepository.GetAllAsync(cancellationToken);
+        var users = await userRepository.GetAllAsync();
 
         var userDtos = new List<UserDto>();
         foreach (var user in users)
         {
-            var roles = await userRepository.GetUserRolesByUserIdAsync(user.Id, cancellationToken);
+            var roles = await userManager.GetRolesAsync(user);
             userDtos.Add(new UserDto
             {
                 Id = user.Id,
