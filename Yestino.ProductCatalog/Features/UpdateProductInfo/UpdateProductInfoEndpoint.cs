@@ -8,7 +8,7 @@ public record UpdateProductInfoCommand(string ProductName, string ProductDescrip
 
 public static class UpdateProductInfoEndpoint
 {
-    [WolverinePut("/product/{productId}")]
+    [WolverinePut("/products/{productId}")]
     public static IStorageAction<Product> Put([Entity] Product product, UpdateProductInfoCommand command)
     {
         product.Update(command.ProductName, command.ProductDescription, command.ImageUrl);

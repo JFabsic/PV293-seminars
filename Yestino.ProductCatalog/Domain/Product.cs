@@ -7,6 +7,7 @@ public class Product : AggregateRoot
     public string Name { get; private set; }
     public string Description { get; private set; }
     public string? ImageUrl { get; private set; }
+    public bool IsActive { get; private set; }
 
     public static Product Create(string name, string description, string? imageUrl)
     {
@@ -15,6 +16,7 @@ public class Product : AggregateRoot
             Name = name,
             Description = description,
             ImageUrl = imageUrl,
+            IsActive = true,
         };
     }
 
@@ -23,5 +25,25 @@ public class Product : AggregateRoot
         Name = name;
         Description = description;
         ImageUrl = imageUrl;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+        {
+            throw new InvalidOperationException("Product is already deactivated");
+        }
+
+        IsActive = false;
+    }
+
+    public void Activate()
+    {
+        if (IsActive)
+        {
+            throw new InvalidOperationException("Product is already active");
+        }
+
+        IsActive = true;
     }
 }

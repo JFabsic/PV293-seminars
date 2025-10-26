@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Wolverine;
 using Wolverine.Http;
 using Wolverine.Persistence;
 using Yestino.ProductCatalog.Domain;
@@ -51,5 +50,17 @@ public static class ProductCreatedHandler
     {
         var product = dbContext.Products.FirstOrDefault(x => x.Name == e.Name);
         Console.WriteLine("Product created: {0}", e.Name);
+    }
+
+    public static void Handle(ProductActivated e, ProductCatalogDbContext dbContext)
+    {
+        var product = dbContext.Products.FirstOrDefault(x => x.Name == e.Name);
+        Console.WriteLine("Product activated: {0}", e.Name);
+    }
+    
+    public static void Handle(ProductDeactivated e, ProductCatalogDbContext dbContext)
+    {
+        var product = dbContext.Products.FirstOrDefault(x => x.Name == e.Name);
+        Console.WriteLine("Product activated: {0}", e.Name);
     }
 }
