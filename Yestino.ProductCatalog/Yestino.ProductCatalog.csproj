@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\DeactivateProduct\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.10" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.0.0" />
+      <PackageReference Include="WolverineFx.Http" Version="5.0.0" />
+      <PackageReference Include="WolverineFx.Postgresql" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Yestino.Common\Yestino.Common.csproj" />
+      <ProjectReference Include="..\Yestino.ProductCatalogContracts\Yestino.ProductCatalogContracts.csproj" />
+    </ItemGroup>
+
+</Project>

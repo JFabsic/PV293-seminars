@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Yestino</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+        <PackageReference Include="WolverineFx.FluentValidation" Version="5.0.0" />
+        <PackageReference Include="WolverineFx.Postgresql" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Yestino.Common\Yestino.Common.csproj" />
+      <ProjectReference Include="..\Yestino.ProductCatalog\Yestino.ProductCatalog.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Internal\Generated\" />
+    </ItemGroup>
+
+</Project>

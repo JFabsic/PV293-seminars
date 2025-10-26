@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yestino", "Yestino\Yestino.csproj", "{0A1FB0AF-DE79-4158-869E-9809A949579E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ordering", "Ordering", "{74A4586F-6DBC-424A-A573-FA234C6C0426}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Warehouse", "Warehouse", "{806D0760-E3ED-46EF-AE29-9BAD752995B2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProductCatalog", "ProductCatalog", "{D4A8F2B1-2779-485D-8B41-2DB53A6200A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yestino.Common", "Yestino.Common\Yestino.Common.csproj", "{F747C89C-D63A-4B69-9C6D-0FC85934A687}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yestino.ProductCatalog", "Yestino.ProductCatalog\Yestino.ProductCatalog.csproj", "{77BB68C3-E9C6-40CB-9BA9-554821FC55B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yestino.ProductCatalogContracts", "Yestino.ProductCatalogContracts\Yestino.ProductCatalogContracts.csproj", "{D44CDBE7-7F9E-4803-8AD3-19DE11695024}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A1FB0AF-DE79-4158-869E-9809A949579E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A1FB0AF-DE79-4158-869E-9809A949579E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A1FB0AF-DE79-4158-869E-9809A949579E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A1FB0AF-DE79-4158-869E-9809A949579E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F747C89C-D63A-4B69-9C6D-0FC85934A687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F747C89C-D63A-4B69-9C6D-0FC85934A687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F747C89C-D63A-4B69-9C6D-0FC85934A687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F747C89C-D63A-4B69-9C6D-0FC85934A687}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BB68C3-E9C6-40CB-9BA9-554821FC55B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77BB68C3-E9C6-40CB-9BA9-554821FC55B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77BB68C3-E9C6-40CB-9BA9-554821FC55B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77BB68C3-E9C6-40CB-9BA9-554821FC55B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D44CDBE7-7F9E-4803-8AD3-19DE11695024}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D44CDBE7-7F9E-4803-8AD3-19DE11695024}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D44CDBE7-7F9E-4803-8AD3-19DE11695024}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D44CDBE7-7F9E-4803-8AD3-19DE11695024}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{77BB68C3-E9C6-40CB-9BA9-554821FC55B3} = {D4A8F2B1-2779-485D-8B41-2DB53A6200A3}
+		{D44CDBE7-7F9E-4803-8AD3-19DE11695024} = {D4A8F2B1-2779-485D-8B41-2DB53A6200A3}
+	EndGlobalSection
+EndGlobal

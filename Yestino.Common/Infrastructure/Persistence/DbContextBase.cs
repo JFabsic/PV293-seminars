@@ -1,0 +1,30 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Wolverine;
+using Yestino.Common.Domain;
+
+namespace Yestino.Common.Infrastructure.Persistence;
+
+public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) : DbContext(options)
+{
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var aggregateRoots = ChangeTracker
+            .Entries<AggregateRoot>()
+            .Select(e => e.Entity)
+            .Where(e => e.DomainEvents.Any())
+            .ToList();
+
+        var domainEvents = aggregateRoots
+            .SelectMany(e => e.DomainEvents)
+            .ToList();
+
+        aggregateRoots.ForEach(e => e.ClearDomainEvents());
+
+        foreach (var domainEvent in domainEvents)
+        {
+            await bus.PublishAsync(domainEvent);
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+}
