@@ -8,7 +8,7 @@ namespace Yestino.ProductCatalog.Features.ActivateProduct;
 
 public static class ActivateProductEndpoint
 {
-    [WolverinePost("/products/{productId}/activate")]
+    [WolverinePut("/products/{productId}/activate")]
     public static (IResult, IStorageAction<Product>, ProductActivated?) ActivateProduct([Entity] Product product)
     {
         if (product.IsActive)

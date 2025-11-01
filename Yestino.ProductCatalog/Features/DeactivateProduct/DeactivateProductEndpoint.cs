@@ -8,7 +8,7 @@ namespace Yestino.ProductCatalog.Features.DeactivateProduct;
 
 public static class DeactivateProductEndpoint
 {
-    [WolverinePost("/products/{productId}/deactivate")]
+    [WolverinePut("/products/{productId}/deactivate")]
     public static (IResult, IStorageAction<Product>, ProductDeactivated?) DeactivateProduct([Entity] Product product)
     {
         if (!product.IsActive)
