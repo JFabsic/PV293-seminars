@@ -8,6 +8,28 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
 {
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        UpdateAggregateRootVersions();
+        await PublishDomainEventsAsync();
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    public void UpdateAggregateRootVersions()
+    {
+        var aggregateRoots = ChangeTracker
+            .Entries<AggregateRoot>()
+            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+            .Select(e => e.Entity)
+            .ToList();
+
+        foreach (var aggregateRoot in aggregateRoots)
+        {
+            aggregateRoot.Version = Guid.NewGuid();
+        }
+    }
+    
+    public async Task PublishDomainEventsAsync()
+    {
         var aggregateRoots = ChangeTracker
             .Entries<AggregateRoot>()
             .Select(e => e.Entity)
@@ -24,7 +46,5 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
         {
             await bus.PublishAsync(domainEvent);
         }
-
-        return await base.SaveChangesAsync(cancellationToken);
     }
 }

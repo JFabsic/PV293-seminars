@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Wolverine;
 using Wolverine.Http;
 using Wolverine.Persistence;
 using Yestino.ProductCatalog.Entities;
@@ -10,18 +9,20 @@ namespace Yestino.ProductCatalog.Features.DeactivateProduct;
 public static class DeactivateProductEndpoint
 {
     [WolverinePost("/products/{productId}/deactivate")]
-    public static (IResult, IStorageAction<Product>, ProductDeactivated?) DeactivateProduct([Entity] Product product, IMessageBus bus)
+    public static (IResult, IStorageAction<Product>, ProductDeactivated?) DeactivateProduct([Entity] Product product)
     {
-        if (product.IsActive)
+        if (!product.IsActive)
         {
             return (
-                Results.BadRequest("Product with the same name already exists"),
+                Results.BadRequest("Product is already deactivated"),
                 Storage.Nothing<Product>(),
                 null);
         }
 
+        product.IsActive = false;
+
         return (
-            Results.Ok(product),
+            Results.NoContent(),
             Storage.Update(product),
             new ProductDeactivated(product.Id, product.Name)
         );

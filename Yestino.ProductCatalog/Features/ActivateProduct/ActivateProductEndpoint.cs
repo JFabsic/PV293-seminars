@@ -19,6 +19,8 @@ public static class ActivateProductEndpoint
                 null
             );
         }
+        
+        product.IsActive = true;
 
         return (
             Results.NoContent(),

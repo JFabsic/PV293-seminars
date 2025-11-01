@@ -21,14 +21,6 @@ public abstract class AggregateRoot : Entity<Guid>
 
     protected void RaiseDomainEvent(DomainEvent domainEvent)
     {
-        // TODO: this should happen in the SaveChangesAsync for all created/updated entities maybe...
-        Version = domainEvent.AggregateVersion;
-
-        if (Id == Guid.Empty)
-        {
-            throw new InvalidOperationException("Aggregate Id is not set");
-        }
-
         _domainEvents.Add(domainEvent);
     }
 }
