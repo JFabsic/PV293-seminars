@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
 using Yestino.Common.Infrastructure.Persistence;
-using Yestino.ProductCatalog.Domain;
+using Yestino.ProductCatalog.Entities;
 
 namespace Yestino.ProductCatalog.Infrastructure;
 

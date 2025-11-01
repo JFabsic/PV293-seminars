@@ -2,17 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Wolverine.EntityFrameworkCore;
-using Yestino.ProductCatalog.Infrastructure;
+using Yestino.Ordering.Infrastructure;
 
-namespace Yestino.ProductCatalog;
+namespace Yestino.Ordering;
 
 public static class DependencyInjection
 {
-    public static WebApplicationBuilder AddProductCatalogModule(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddOrderingModule(this WebApplicationBuilder builder)
     {
         var connectionString = builder.Configuration.GetConnectionString("YestinoDb");
-
-        builder.Services.AddDbContextWithWolverineIntegration<ProductCatalogDbContext>(options =>
+        
+        builder.Services.AddDbContextWithWolverineIntegration<OrderingDbContext>(options =>
             options.UseNpgsql(connectionString));
 
         return builder;

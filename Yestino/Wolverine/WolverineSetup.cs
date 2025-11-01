@@ -2,11 +2,16 @@
 using JasperFx.Core;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
+using Wolverine.Configuration;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.ErrorHandling;
 using Wolverine.FluentValidation;
 using Wolverine.Postgresql;
 using Yestino.Common;
+using Yestino.Common.Domain;
+using Yestino.Ordering.Infrastructure;
+using Yestino.ProductCatalog.Infrastructure;
+using Yestino.ProductCatalogContracts.DomainEvents;
 
 namespace Yestino.Wolverine;
 
@@ -20,6 +25,7 @@ public static class WolverineSetup
         {
             opts.ApplicationAssembly = typeof(Program).Assembly;
             opts.Discovery.IncludeAssembly(typeof(ProductCatalog.DependencyInjection).Assembly);
+            opts.Discovery.IncludeAssembly(typeof(Ordering.DependencyInjection).Assembly);
             // TODO: register modules here
 
             opts.CodeGeneration.TypeLoadMode = TypeLoadMode.Static;
@@ -31,21 +37,21 @@ public static class WolverineSetup
 
             var connectionString = builder.Configuration.GetConnectionString("YestinoDb")
                                    ?? throw new InvalidOperationException("Connection string 'YestinoDb' not found.");
-            opts.PersistMessagesWithPostgresql(connectionString, "wolverine");
+            opts.PersistMessagesWithPostgresql(connectionString, "wolverine").Enroll<ProductCatalogDbContext>();
 
-
+            opts.UseEntityFrameworkCoreTransactions();
+            opts.Policies.AutoApplyTransactions();
+            
+            opts.Durability.MessageStorageSchemaName = "wolverine";
+            opts.MultipleHandlerBehavior = MultipleHandlerBehavior.Separated;
+            opts.Durability.MessageIdentity = MessageIdentity.IdAndDestination;
+            
             opts.Policies.UseDurableLocalQueues();
             opts.Policies.UseDurableInboxOnAllListeners();
             opts.Policies.UseDurableOutboxOnAllSendingEndpoints();
 
 
             opts.UseFluentValidation();
-            
-
-            opts.Durability.MessageStorageSchemaName = "wolverine";
-            opts.MultipleHandlerBehavior = MultipleHandlerBehavior.Separated;
-            opts.Durability.MessageIdentity = MessageIdentity.IdAndDestination;
-            opts.Policies.AutoApplyTransactions();
 
             opts.OnException<DbUpdateException>().RetryWithCooldown(DefaultRetryIntervals)
                 .Then.ScheduleRetryIndefinitely(5.Minutes());
@@ -54,6 +60,7 @@ public static class WolverineSetup
 
             opts.OnException<DbUpdateConcurrencyException>().RetryWithCooldown(DefaultRetryIntervals)
                 .Then.ScheduleRetryIndefinitely(5.Minutes());
+
         });
 
         return builder;

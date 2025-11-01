@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Wolverine.Http;
 using Wolverine.Persistence;
-using Yestino.ProductCatalog.Domain;
+using Yestino.ProductCatalog.Entities;
 using Yestino.ProductCatalog.Infrastructure;
 using Yestino.ProductCatalogContracts.DomainEvents;
 
@@ -34,33 +34,17 @@ public static class CreateProductEndpoint
             );
         }
 
-        var product = Product.Create(command.Name, command.Description ?? "", command.ImageUrl);
+        var product = new Product
+        {
+            Name = command.Name,
+            Description = command.Description ?? "",
+            ImageUrl = command.ImageUrl,
+        };
 
         return (
-            Results.Ok(product),
+            Results.Ok(product.Id),
             Storage.Insert(product),
             new ProductCreated(product.Id, product.Name, product.Description, command.ImageUrl)
         );
-    }
-}
-
-public static class ProductCreatedHandler
-{
-    public static void Handle(ProductCreated e, ProductCatalogDbContext dbContext)
-    {
-        var product = dbContext.Products.FirstOrDefault(x => x.Name == e.Name);
-        Console.WriteLine("Product created: {0}", e.Name);
-    }
-
-    public static void Handle(ProductActivated e, ProductCatalogDbContext dbContext)
-    {
-        var product = dbContext.Products.FirstOrDefault(x => x.Name == e.Name);
-        Console.WriteLine("Product activated: {0}", e.Name);
-    }
-    
-    public static void Handle(ProductDeactivated e, ProductCatalogDbContext dbContext)
-    {
-        var product = dbContext.Products.FirstOrDefault(x => x.Name == e.Name);
-        Console.WriteLine("Product activated: {0}", e.Name);
     }
 }

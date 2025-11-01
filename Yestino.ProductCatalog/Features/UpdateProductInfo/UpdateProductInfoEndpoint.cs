@@ -1,6 +1,6 @@
 using Wolverine.Http;
 using Wolverine.Persistence;
-using Yestino.ProductCatalog.Domain;
+using Yestino.ProductCatalog.Entities;
 
 namespace Yestino.ProductCatalog.Features.UpdateProductInfo;
 
@@ -9,9 +9,12 @@ public record UpdateProductInfoCommand(string ProductName, string ProductDescrip
 public static class UpdateProductInfoEndpoint
 {
     [WolverinePut("/products/{productId}")]
-    public static IStorageAction<Product> Put([Entity] Product product, UpdateProductInfoCommand command)
+    public static IStorageAction<Product> UpdateProductInfo([Entity] Product product, UpdateProductInfoCommand command)
     {
-        product.Update(command.ProductName, command.ProductDescription, command.ImageUrl);
+        product.Name = command.ProductName;
+        product.Description = command.ProductDescription;
+        product.ImageUrl = command.ImageUrl;
+
         return new Update<Product>(product);
     }
 }

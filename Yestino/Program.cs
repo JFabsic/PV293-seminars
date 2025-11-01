@@ -1,6 +1,7 @@
 using JasperFx;
 using Wolverine;
 using Wolverine.Http;
+using Yestino.Ordering;
 using Yestino.ProductCatalog;
 using Yestino.Wolverine;
 
@@ -20,6 +21,7 @@ builder.Services.AddWolverineHttp();
 builder.Host.ApplyJasperFxExtensions();
 
 builder.AddProductCatalogModule();
+builder.AddOrderingModule();
 // TODO: register modules here
 
 var app = builder.Build();
