@@ -18,6 +18,7 @@ public static class GetProductsEndpoint
                 Name = x.Name,
                 Description = x.Description,
                 ImageUrl = x.ImageUrl,
+                Price = x.Price,
             })
             .ToListAsync(cancellationToken);
     }

@@ -12,6 +12,7 @@ public record CreateProductCommand
     public required string Name { get; init; }
     public string? Description { get; init; }
     public string? ImageUrl { get; init; }
+    public required decimal Price { get; init; }
 }
 
 public static class CreateProductEndpoint
@@ -39,12 +40,13 @@ public static class CreateProductEndpoint
             Name = command.Name,
             Description = command.Description ?? "",
             ImageUrl = command.ImageUrl,
+            Price = command.Price,
         };
 
         return (
             Results.Ok(product.Id),
             Storage.Insert(product),
-            new ProductCreated(product.Id, product.Name, product.Description, command.ImageUrl)
+            new ProductCreated(product.Id, product.Name, product.Description, command.ImageUrl, command.Price)
         );
     }
 }

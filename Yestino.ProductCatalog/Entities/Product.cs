@@ -8,4 +8,5 @@ public class Product : AggregateRoot
     public string Description { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsActive { get; set; }
+    public decimal Price { get; set; }
 }

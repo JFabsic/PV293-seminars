@@ -26,7 +26,8 @@ public class CreateProductTests : IDisposable
         {
             Name = "Test Product",
             Description = "Test Description",
-            ImageUrl = "https://example.com/image.jpg"
+            ImageUrl = "https://example.com/image.jpg",
+            Price = 99.99m
         };
 
         // Act
@@ -42,6 +43,7 @@ public class CreateProductTests : IDisposable
         domainEvent!.Name.Should().Be(command.Name);
         domainEvent.Description.Should().Be(command.Description);
         domainEvent.ImageUrl.Should().Be(command.ImageUrl);
+        domainEvent.Price.Should().Be(command.Price);
     }
 
     [Fact]
@@ -51,7 +53,8 @@ public class CreateProductTests : IDisposable
         var command = new CreateProductCommand
         {
             Name = "Test Product",
-            Description = "Test Description"
+            Description = "Test Description",
+            Price = 49.99m
         };
 
         // Act
@@ -70,7 +73,8 @@ public class CreateProductTests : IDisposable
         // Arrange
         var command = new CreateProductCommand
         {
-            Name = "Test Product"
+            Name = "Test Product",
+            Price = 29.99m
         };
 
         // Act
@@ -99,7 +103,8 @@ public class CreateProductTests : IDisposable
         var command = new CreateProductCommand
         {
             Name = "Duplicate Product",
-            Description = "New Product"
+            Description = "New Product",
+            Price = 19.99m
         };
 
         // Act

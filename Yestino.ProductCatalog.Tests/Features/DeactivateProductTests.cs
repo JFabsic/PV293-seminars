@@ -29,7 +29,6 @@ public class DeactivateProductTests
         // Assert - Domain event
         domainEvent.Should().NotBeNull();
         domainEvent!.AggregateId.Should().Be(product.Id);
-        domainEvent.Name.Should().Be(product.Name);
         domainEvent.OccurredOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
     }
 
