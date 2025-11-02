@@ -2,16 +2,12 @@
 using JasperFx.Core;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
-using Wolverine.Configuration;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.ErrorHandling;
 using Wolverine.FluentValidation;
 using Wolverine.Postgresql;
-using Yestino.Common;
-using Yestino.Common.Domain;
-using Yestino.Ordering.Infrastructure;
+using Yestino.ProductCatalog;
 using Yestino.ProductCatalog.Infrastructure;
-using Yestino.ProductCatalogContracts.DomainEvents;
 
 namespace Yestino.Wolverine;
 
@@ -24,7 +20,8 @@ public static class WolverineSetup
         builder.Host.UseWolverine(opts =>
         {
             opts.ApplicationAssembly = typeof(Program).Assembly;
-            opts.Discovery.IncludeAssembly(typeof(ProductCatalog.DependencyInjection).Assembly);
+            opts.Discovery.IncludeAssembly(typeof(DependencyInjection).Assembly);
+            opts.Discovery.IncludeAssembly(typeof(Warehouse.DependencyInjection).Assembly);
             opts.Discovery.IncludeAssembly(typeof(Ordering.DependencyInjection).Assembly);
             // TODO: register modules here
 

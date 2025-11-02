@@ -37,7 +37,7 @@ public class ActivateProductOldSchool
 
         product.IsActive = true;
 
-        var domainEvent = new ProductActivated(productId, product.Name);
+        var domainEvent = new ProductActivated(productId);
         await _bus.PublishAsync(domainEvent);
 
         return Results.NoContent();

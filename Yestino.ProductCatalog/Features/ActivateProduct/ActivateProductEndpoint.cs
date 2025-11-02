@@ -25,7 +25,7 @@ public static class ActivateProductEndpoint
         return (
             Results.NoContent(),
             Storage.Update(product),
-            new ProductActivated(product.Id, product.Name)
+            new ProductActivated(product.Id)
         );
     }
 }

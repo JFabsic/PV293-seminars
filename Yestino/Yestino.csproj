@@ -18,11 +18,7 @@
       <ProjectReference Include="..\Yestino.Common\Yestino.Common.csproj" />
       <ProjectReference Include="..\Yestino.Ordering\Yestino.Ordering.csproj" />
       <ProjectReference Include="..\Yestino.ProductCatalog\Yestino.ProductCatalog.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Internal\" />
-      <Folder Include="Internal\Generated\" />
+      <ProjectReference Include="..\Yestino.Warehouse\Yestino.Warehouse.csproj" />
     </ItemGroup>
 
 </Project>

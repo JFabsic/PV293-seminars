@@ -24,7 +24,7 @@ public static class DeactivateProductEndpoint
         return (
             Results.NoContent(),
             Storage.Update(product),
-            new ProductDeactivated(product.Id, product.Name)
+            new ProductDeactivated(product.Id)
         );
     }
 }
