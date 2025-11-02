@@ -21,4 +21,8 @@
       <ProjectReference Include="..\Yestino.Warehouse\Yestino.Warehouse.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Internal\Generated\" />
+    </ItemGroup>
+
 </Project>

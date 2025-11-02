@@ -35,6 +35,15 @@ public static class CreateProductEndpoint
             );
         }
 
+        if (command.Price < 0)
+        {
+            return (
+                Results.BadRequest("Price cannot be negative"),
+                Storage.Nothing<Product>(),
+                null
+            );
+        }
+
         var product = new Product
         {
             Name = command.Name,

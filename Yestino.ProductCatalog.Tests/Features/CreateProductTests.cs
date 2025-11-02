@@ -118,6 +118,28 @@ public class CreateProductTests : IDisposable
         domainEvent.Should().BeNull();
     }
 
+    [Fact]
+    public void CreateProduct_WithNegativePrice_ShouldReturnBadRequestAndNotRaiseEvent()
+    {
+        // Arrange
+        var command = new CreateProductCommand
+        {
+            Name = "Test Product",
+            Description = "Test Description",
+            Price = -10.00m
+        };
+
+        // Act
+        var existingProduct = CreateProductEndpoint.Before(command, _dbContext);
+        var (result, storageAction, domainEvent) = CreateProductEndpoint.CreateProduct(existingProduct, command);
+
+        // Assert - Response
+        result.Should().BeOfType<Microsoft.AspNetCore.Http.HttpResults.BadRequest<string>>();
+
+        // Assert - No domain event
+        domainEvent.Should().BeNull();
+    }
+
     public void Dispose()
     {
         _dbContext.Dispose();
