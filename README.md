@@ -72,7 +72,7 @@ Implement commands from the event storming session. Create aggregates, read mode
 
 **Create domain events** in `Yestino.OrderingContracts` project (inheriting from `DomainEvent`).
 
-**Raise events from aggregates** using `RaiseDomainEvent()` method (events are auto-published via `DbContextBase.SaveChangesAsync()`) or as Cascading Messages (Wolverine way).
+**Raise events from aggregates** using `RaiseDomainEvent()` method (events are auto-published via `DbContextBase.SaveChangesAsync()`) or as Cascading Messages (the Wolverine way).
 
 **Create event handlers in other modules** (e.g., Warehouse module reacts to `OrderPlaced`):
 - Wolverine automatically discovers and routes handlers
