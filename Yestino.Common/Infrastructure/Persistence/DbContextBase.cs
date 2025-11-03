@@ -14,7 +14,7 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
         return await base.SaveChangesAsync(cancellationToken);
     }
 
-    public void UpdateAggregateRootVersions()
+    private void UpdateAggregateRootVersions()
     {
         var aggregateRoots = ChangeTracker
             .Entries<AggregateRoot>()
@@ -28,7 +28,7 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
         }
     }
     
-    public async Task PublishDomainEventsAsync()
+    private async Task PublishDomainEventsAsync()
     {
         var aggregateRoots = ChangeTracker
             .Entries<AggregateRoot>()

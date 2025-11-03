@@ -7,7 +7,6 @@ using Wolverine.ErrorHandling;
 using Wolverine.FluentValidation;
 using Wolverine.Postgresql;
 using Yestino.ProductCatalog;
-using Yestino.ProductCatalog.Infrastructure;
 
 namespace Yestino.Wolverine;
 
@@ -33,7 +32,7 @@ public static class WolverineSetup
 
             var connectionString = builder.Configuration.GetConnectionString("YestinoDb")
                                    ?? throw new InvalidOperationException("Connection string 'YestinoDb' not found.");
-            opts.PersistMessagesWithPostgresql(connectionString, "wolverine").Enroll<ProductCatalogDbContext>();
+            opts.PersistMessagesWithPostgresql(connectionString, "wolverine");
 
             opts.UseEntityFrameworkCoreTransactions();
             opts.Policies.AutoApplyTransactions();
