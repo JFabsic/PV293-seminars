@@ -70,7 +70,7 @@ Implement commands from the event storming session. Create aggregates, read mode
 
 ## Task 4: Implement Async Module Integration via Domain Events
 
-**Create domain events** in `Yestino.OrderingContracts` project (inheriting from `DomainEvent`).
+**Create domain events** in the related Contracts projects (inheriting from `DomainEvent`).
 
 **Raise events from aggregates** using `RaiseDomainEvent()` method (events are auto-published via `DbContextBase.SaveChangesAsync()`) or as Cascading Messages (the Wolverine way).
 
