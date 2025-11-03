@@ -17,8 +17,6 @@ builder.Services.AddSwaggerGen();
 
 
 builder.SetupWolverine();
-builder.Services.AddWolverineHttp();
-builder.Host.ApplyJasperFxExtensions();
 
 builder.AddProductCatalogModule();
 builder.AddWarehouseModule();

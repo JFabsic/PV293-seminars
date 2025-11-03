@@ -1,10 +1,12 @@
-﻿using JasperFx.CodeGeneration;
+﻿using JasperFx;
+using JasperFx.CodeGeneration;
 using JasperFx.Core;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.ErrorHandling;
 using Wolverine.FluentValidation;
+using Wolverine.Http;
 using Wolverine.Postgresql;
 using Yestino.ProductCatalog;
 
@@ -16,6 +18,9 @@ public static class WolverineSetup
 
     public static WebApplicationBuilder SetupWolverine(this WebApplicationBuilder builder)
     {
+        builder.Services.AddWolverineHttp();
+        builder.Host.ApplyJasperFxExtensions();
+        
         builder.Host.UseWolverine(opts =>
         {
             opts.ApplicationAssembly = typeof(Program).Assembly;
