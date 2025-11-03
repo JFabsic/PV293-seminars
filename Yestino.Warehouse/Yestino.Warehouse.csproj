@@ -21,6 +21,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Yestino.Common\Yestino.Common.csproj" />
+      <ProjectReference Include="..\Yestino.ProductCatalogContracts\Yestino.ProductCatalogContracts.csproj" />
+      <ProjectReference Include="..\Yestino.WarehouseContracts\Yestino.WarehouseContracts.csproj" />
     </ItemGroup>
 
 </Project>

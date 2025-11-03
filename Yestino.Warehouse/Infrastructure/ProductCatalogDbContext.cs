@@ -12,7 +12,7 @@ public class WarehouseDbContext(DbContextOptions<WarehouseDbContext> options, IM
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.HasDefaultSchema("product_catalog");
+        modelBuilder.HasDefaultSchema("warehouse");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WarehouseDbContext).Assembly);
     }
 }
