@@ -21,13 +21,9 @@ builder.Services.AddSwaggerGen();
 
 builder.SetupWolverine();
 
-var moduleAssemblies = new List<Assembly>();
-
-builder.AddProductCatalogModule(moduleAssemblies);
-builder.AddWarehouseModule(moduleAssemblies);
-builder.AddOrderingModule(moduleAssemblies);
-
-builder.Services.AddCarter(new DependencyContextAssemblyCatalog(moduleAssemblies.ToArray()));
+builder.AddProductCatalogModule();
+builder.AddWarehouseModule();
+// TODO: register modules here
 
 var app = builder.Build();
 

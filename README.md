@@ -1,54 +1,87 @@
-# Seminar 1: Library Management System - MediatR Refactoring
+# Seminar 4 & 5: Yestino – Event-Driven E-Commerce Platform
+
+Yestino is a **modular monolith** e-commerce application built with DDD and event-driven architecture.
+
+**Existing modules:** ProductCatalog, Warehouse
+**Your task:** Implement the Ordering module with async communication via domain events.
+
+---
+
+## Task 1: Setup Database and Run Migrations
+
+### 1.1 Start PostgreSQL Database
+
+Run the following command to start a PostgreSQL container:
+
+```bash
+docker run -d \
+--name YestinoDb \
+-e POSTGRES_USER=postgres \
+-e POSTGRES_PASSWORD=postgres \
+-e POSTGRES_DB=YestinoDb \
+-p 1234:5432 \
+postgres:latest
+```
+
+### 1.2 Apply Migrations for All Modules
+
+Each module has its own database schema. Apply migrations for each:
+
+**ProductCatalog Module:**
+```bash
+dotnet ef database update \
+  --project Yestino.ProductCatalog/Yestino.ProductCatalog.csproj \
+  --startup-project Yestino/Yestino.csproj \
+  --context ProductCatalogDbContext
+```
+
+**Warehouse Module:**
+```bash
+dotnet ef database update \
+  --project Yestino.Warehouse/Yestino.Warehouse.csproj \
+  --startup-project Yestino/Yestino.csproj \
+  --context WarehouseDbContext
+```
+
+**Verify Setup:**
+```bash
+dotnet run --project Yestino/Yestino.csproj
+```
+
+---
+
+## Task 2: Create and Register the Ordering Module
+
+- Create a new project for the Ordering module
+- Add necessary package references (EF Core, Npgsql, etc.) similar to other modules.
+- Create `DependencyInjection.cs` in the Ordering module.
+- Register in Program.cs
+- Configure Wolverine Assembly Discovery in [Yestino/Wolverine/WolverineSetup.cs](Yestino/Wolverine/WolverineSetup.cs)
+- Create Init migration and apply it.
 
 
-## Background
+---
 
-You have a working Library Management API that uses traditional service layer pattern. Your task is to refactor it to use MediatR library to implement the CQRS (Command Query Responsibility Segregation) pattern and improve code organization. 
+## Task 3: Implement Ordering Commands from Event Storming
 
-## Tasks
+Implement commands from the event storming session. Create aggregates, read models, commands, handler, endpoints. 
 
-### 1. Setup MediatR
+---
 
-- Install MediatR NuGet package in both `Library.BusinessLayer` and `Library.API` projects
-- Register MediatR in the DI container in `Program.cs` (see the MediatR docs)
-- Create marker interfaces: `ICommand`, `IQuery`, and `IDomainEvent` that inherit from appropriate MediatR interfaces. These provide semantic meaning to your handlers and enable specific behaviors (e.g., transactions only for commands, caching for queries) - CQRS
+## Task 4: Implement Async Module Integration via Domain Events
 
-### 2. Refactor GetAllBooks Endpoint
+**Create domain events** in the related Contracts projects (inheriting from `DomainEvent`).
 
-- Create `GetAllBooksQuery` and its handler
-- Look at the current implementation in `BookService.GetAllBooksAsync()` - what performance issue do you notice?
-- **Hint:** Count how many database queries are executed when you have 10 books
-- Fix the performance issue in your query handler
-- Update the endpoint to use MediatR instead of `IBookService`
+**Raise events from aggregates** using `RaiseDomainEvent()` method (events are auto-published via `DbContextBase.SaveChangesAsync()`) or as Cascading Messages (the Wolverine way).
 
-### 3. Refactor CreateBook Endpoint
+**Create event handlers in other modules** (e.g., Warehouse module reacts to `OrderPlaced`):
+- Wolverine automatically discovers and routes handlers
+- Modules communicate **only via domain events**, no direct references
 
-- Create `CreateBookCommand` and its handler
-- Move the book creation logic from `BookService.CreateBookAsync()` to the command handler
-- Notice how the method does multiple things (validation, creation, statistics update)
-- Update the endpoint to use MediatR
+---
 
-### 4. Refactor GetAuthors Endpoint
+## Resources
 
-- Create `GetAuthorsQuery` and its handler
-- Move the logic from `AuthorService` to the query handler
-- Update the endpoint to use MediatR
-
-## Optional Advanced Task
-
-Move the author statistics update logic (in CreateBook) to a separate domain event handler:
-
-- Create `BookCreatedEvent` that implements `IDomainEvent`
-- Create `BookCreatedEventHandler` that updates author statistics
-- Publish the event after creating a book
-- This demonstrates proper separation of concerns
-
-## Tips
-
-- Test your endpoints using Swagger UI
-- The N+1 problem occurs when you load a list of entities and then load related data for each one individually
-- Entity Framework's `Include()` method can help with eager loading
-- Using `Select()` projection can optimize queries by only fetching needed data
-- Domain events help separate side effects from main business logic
+- **Wolverine Documentation**: https://wolverinefx.net/
 
 Good luck! 🚀
