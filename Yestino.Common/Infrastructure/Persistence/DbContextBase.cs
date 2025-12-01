@@ -8,8 +8,8 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
 {
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        UpdateAggregateRootVersions();
         await PublishDomainEventsAsync();
+        UpdateAggregateRootVersions();
 
         return await base.SaveChangesAsync(cancellationToken);
     }

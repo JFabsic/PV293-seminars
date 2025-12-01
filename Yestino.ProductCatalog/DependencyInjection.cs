@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +12,10 @@ namespace Yestino.ProductCatalog;
 
 public static class DependencyInjection
 {
-    public static WebApplicationBuilder AddProductCatalogModule(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddProductCatalogModule(this WebApplicationBuilder builder, List<Assembly> moduleAssemblies)
     {
+        moduleAssemblies.Add(typeof(ProductCatalogDbContext).Assembly);
+        
         var connectionString = builder.Configuration.GetConnectionString("YestinoDb");
 
         builder.Services.AddDbContextWithWolverineIntegration<ProductCatalogDbContext>(options =>

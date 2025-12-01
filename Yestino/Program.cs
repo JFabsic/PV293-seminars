@@ -1,6 +1,9 @@
+using System.Reflection;
+using Carter;
 using JasperFx;
 using Wolverine;
 using Wolverine.Http;
+using Yestino.Ordering;
 using Yestino.ProductCatalog;
 using Yestino.Warehouse;
 using Yestino.Wolverine;
@@ -18,9 +21,13 @@ builder.Services.AddSwaggerGen();
 
 builder.SetupWolverine();
 
-builder.AddProductCatalogModule();
-builder.AddWarehouseModule();
-// TODO: register modules here
+var moduleAssemblies = new List<Assembly>();
+
+builder.AddProductCatalogModule(moduleAssemblies);
+builder.AddWarehouseModule(moduleAssemblies);
+builder.AddOrderingModule(moduleAssemblies);
+
+builder.Services.AddCarter(new DependencyContextAssemblyCatalog(moduleAssemblies.ToArray()));
 
 var app = builder.Build();
 
@@ -35,6 +42,10 @@ if (app.Environment.IsDevelopment())
 await app.Services.ApplyAsyncWolverineExtensions();
 app.MapWolverineEndpoints();
 
+app.MapCarter();
+
 app.UseHttpsRedirection();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 return await app.RunJasperFxCommands(args.Length == 0 ? ["run"] : args);

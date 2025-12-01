@@ -6,21 +6,19 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.0.0" />
-      <PackageReference Include="WolverineFx.Postgresql" Version="5.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore">
-        <HintPath>..\..\..\..\..\usr\local\share\dotnet\shared\Microsoft.AspNetCore.App\9.0.9\Microsoft.AspNetCore.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.10" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+		<PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.0.0" />
+		<PackageReference Include="WolverineFx.Http" Version="5.0.0" />
+		<PackageReference Include="WolverineFx.Postgresql" Version="5.0.0" />
+	</ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Yestino.Common\Yestino.Common.csproj" />
+      <ProjectReference Include="..\Yestino.OrderingContracts\Yestino.OrderingContracts.csproj" />
       <ProjectReference Include="..\Yestino.ProductCatalogContracts\Yestino.ProductCatalogContracts.csproj" />
       <ProjectReference Include="..\Yestino.WarehouseContracts\Yestino.WarehouseContracts.csproj" />
     </ItemGroup>

@@ -84,3 +84,4 @@ Implement commands from the event storming session. Create aggregates, read mode
 
 - **Wolverine Documentation**: https://wolverinefx.net/
 
+Good luck! 🚀
