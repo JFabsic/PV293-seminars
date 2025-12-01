@@ -5,14 +5,13 @@ using Wolverine.Persistence;
 using Yestino.Ordering.Domain;
 using Yestino.Ordering.Features.Commands.CreateOrder;
 using Yestino.Ordering.Infrastructure;
-using Yestino.OrderingContracts.DomainEvents;
 
 namespace Yestino.Ordering.Features.CreateOrder;
 
 public static class CreateOrderEndpoint
 {
     [WolverinePost("/orders")]
-    public static async Task<(IResult, IStorageAction<Order>, OrderCreated?)> CreateOrder(
+    public static async Task<(IResult, IStorageAction<Order>)> CreateOrder(
         CreateOrderCommand command,
         OrderingDbContext dbContext,
         CancellationToken cancellationToken = default)
@@ -20,20 +19,17 @@ public static class CreateOrderEndpoint
         if (command.Items == null || !command.Items.Any())
         {
             return (Results.BadRequest("Order must contain at least one item"), 
-                   Storage.Nothing<Order>(), 
-                   null);
+                   Storage.Nothing<Order>());
         }
 
         if (string.IsNullOrWhiteSpace(command.CustomerAddress))
         {
             return (Results.BadRequest("Customer address is required"), 
-                   Storage.Nothing<Order>(), 
-                   null);
+                   Storage.Nothing<Order>());
         }
 
         var productIds = command.Items.Select(i => i.ProductId).ToList();
         
-
         var products = await dbContext.ProductReadModels
             .Where(p => productIds.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id, cancellationToken);
@@ -72,16 +68,12 @@ public static class CreateOrderEndpoint
         if (errors.Any())
         {
             return (Results.BadRequest(new { Errors = errors }), 
-                   Storage.Nothing<Order>(), 
-                   null);
+                   Storage.Nothing<Order>());
         }
 
         var order = Order.Create(command.CustomerAddress, orderItems);
         
-        var orderCreated = order.DomainEvents.OfType<OrderCreated>().FirstOrDefault();
-
         return (Results.Created($"/orders/{order.Id}", new { OrderId = order.Id }), 
-               Storage.Insert(order), 
-               orderCreated);
+               Storage.Insert(order));
     }
 }

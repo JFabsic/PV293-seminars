@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Wolverine.Persistence;
 using Yestino.OrderingContracts.DomainEvents;
 using Yestino.Warehouse.Entities;
 using Yestino.Warehouse.Infrastructure;
@@ -8,7 +7,7 @@ namespace Yestino.Warehouse.Features;
 
 public static class OrderShippedHandler
 {
-    public static async Task<IStorageAction<WarehouseProduct>[]> Handle(
+    public static async Task Handle(
         OrderShipped orderShipped,
         WarehouseDbContext dbContext,
         CancellationToken cancellationToken = default)
@@ -19,8 +18,6 @@ public static class OrderShippedHandler
             .Where(wp => productIds.Contains(wp.ProductCatalogId))
             .ToDictionaryAsync(wp => wp.ProductCatalogId, cancellationToken);
 
-        var storageActions = new List<IStorageAction<WarehouseProduct>>();
-
         foreach (var orderItem in orderShipped.Items)
         {
             if (warehouseProducts.TryGetValue(orderItem.ProductId, out var warehouseProduct))
@@ -28,7 +25,7 @@ public static class OrderShippedHandler
                 try
                 {
                     warehouseProduct.RemoveStock(orderItem.Quantity);
-                    storageActions.Add(Storage.Update(warehouseProduct));
+                    warehouseProduct.ReleaseReservedStock(orderItem.Quantity);
                 }
                 catch (InvalidOperationException)
                 {
@@ -36,7 +33,6 @@ public static class OrderShippedHandler
                 }
             }
         }
-
-        return storageActions.ToArray();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

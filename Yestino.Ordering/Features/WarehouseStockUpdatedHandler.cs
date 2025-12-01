@@ -18,14 +18,13 @@ public static class WarehouseStockUpdatedHandler
 
         if (productReadModel == null)
         {
+            // Product read model doesn't exist in ordering context
             return Storage.Nothing<ProductReadModel>();
         }
 
-        var updatedReadModel = productReadModel with 
-        { 
-            StockQuantity = stockUpdated.NewStockQuantity 
-        };
+        // Update the existing tracked entity's stock quantity
+        productReadModel.StockQuantity = stockUpdated.NewStockQuantity;
 
-        return Storage.Update(updatedReadModel);
+        return Storage.Update(productReadModel);
     }
 }

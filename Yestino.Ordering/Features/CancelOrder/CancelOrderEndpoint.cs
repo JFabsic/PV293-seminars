@@ -5,14 +5,14 @@ using Wolverine.Persistence;
 using Yestino.Ordering.Domain;
 using Yestino.Ordering.Infrastructure;
 
-namespace Yestino.Ordering.Features.ShipOrder;
+namespace Yestino.Ordering.Features.CancelOrder;
 
-public static class ShipOrderEndpoint
+public static class CancelOrderEndpoint
 {
-    [WolverinePut("/orders/{orderId}/ship")]
-    public static async Task<(IResult, IStorageAction<Order>)> ShipOrder(
+    [WolverinePut("/orders/{orderId}/cancel")]
+    public static async Task<(IResult, IStorageAction<Order>)> CancelOrder(
         Guid orderId,
-        ShipOrderCommand command,
+        CancelOrderCommand command,
         OrderingDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
@@ -28,24 +28,17 @@ public static class ShipOrderEndpoint
 
         try
         {
-            order.Ship(command.TrackingNumber);
-            
+            order.Cancel();
 
             return (Results.Ok(new { 
                     OrderId = orderId,
                     Status = order.Status.ToString(),
-                    TrackingNumber = order.TrackingNumber,
-                    ShippedAt = order.ShippedAt,
-                    Message = "Order shipped successfully"
+                    CancellationReason = command.Reason,
+                    Message = "Order cancelled successfully"
                 }), 
                 Storage.Update(order));
         }
         catch (InvalidOperationException ex)
-        {
-            return (Results.BadRequest(ex.Message), 
-                   Storage.Nothing<Order>());
-        }
-        catch (ArgumentException ex)
         {
             return (Results.BadRequest(ex.Message), 
                    Storage.Nothing<Order>());

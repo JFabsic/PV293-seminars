@@ -4,7 +4,6 @@ using Wolverine.Http;
 using Wolverine.Persistence;
 using Yestino.Warehouse.Entities;
 using Yestino.Warehouse.Infrastructure;
-using Yestino.WarehouseContracts.DomainEvents;
 
 namespace Yestino.Warehouse.Features.RegisterIncomingProducts;
 
@@ -13,7 +12,7 @@ public record RegisterSingleIncomingProductCommand(int Quantity);
 public static class RegisterSingleIncomingProductEndpoint
 {
     [WolverinePut("/warehouse/products/{productCatalogId}/incoming")]
-    public static async Task<(IResult, IStorageAction<WarehouseProduct>, WarehouseStockUpdated?)> RegisterIncomingProduct(
+    public static async Task<(IResult, IStorageAction<WarehouseProduct>)> RegisterIncomingProduct(
         Guid productCatalogId,
         RegisterSingleIncomingProductCommand command,
         WarehouseDbContext dbContext,
@@ -22,8 +21,7 @@ public static class RegisterSingleIncomingProductEndpoint
         if (command.Quantity <= 0)
         {
             return (Results.BadRequest("Quantity must be positive"), 
-                   Storage.Nothing<WarehouseProduct>(),
-                   null);
+                   Storage.Nothing<WarehouseProduct>());
         }
 
         var warehouseProduct = await dbContext.WarehouseProducts
@@ -32,17 +30,15 @@ public static class RegisterSingleIncomingProductEndpoint
         if (warehouseProduct == null)
         {
             return (Results.NotFound($"Warehouse product with ProductCatalogId {productCatalogId} not found"), 
-                    Storage.Nothing<WarehouseProduct>(),
-                    null);
+                    Storage.Nothing<WarehouseProduct>());
         }
 
         try
         {
             warehouseProduct.AddStock(command.Quantity);
             
-            var domainEvent = warehouseProduct.DomainEvents
-                .OfType<WarehouseStockUpdated>()
-                .FirstOrDefault();
+            // Domain events are automatically published by DbContextBase.SaveChangesAsync()
+            // No need to return them explicitly
             
             return (Results.Ok(new { 
                     ProductCatalogId = productCatalogId,
@@ -50,14 +46,12 @@ public static class RegisterSingleIncomingProductEndpoint
                     NewStockQuantity = warehouseProduct.StockQuantity,
                     Message = "Stock successfully added"
                 }), 
-                Storage.Update(warehouseProduct),
-                domainEvent);
+                Storage.Update(warehouseProduct));
         }
         catch (Exception ex)
         {
             return (Results.BadRequest($"Error adding stock: {ex.Message}"), 
-                   Storage.Nothing<WarehouseProduct>(),
-                   null);
+                   Storage.Nothing<WarehouseProduct>());
         }
     }
 }

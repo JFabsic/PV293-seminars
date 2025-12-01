@@ -1,11 +1,11 @@
 namespace Yestino.Ordering.Application;
 
-public record ProductReadModel
+public class ProductReadModel
 {
-    public Guid Id { get; init; }
-    public required string Name { get; init; }
-    public required string Description { get; init; }
-    public decimal Price { get; init; }
-    public string? ImageUrl { get; init; }
-    public int StockQuantity { get; init; }
+    public Guid Id { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
+    public decimal Price { get; set; }
+    public string? ImageUrl { get; set; }
+    public int StockQuantity { get; set; }
 }

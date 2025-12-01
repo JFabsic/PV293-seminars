@@ -4,23 +4,20 @@ using Wolverine.Http;
 using Wolverine.Persistence;
 using Yestino.Warehouse.Entities;
 using Yestino.Warehouse.Infrastructure;
-using Yestino.WarehouseContracts.DomainEvents;
 
 namespace Yestino.Warehouse.Features.RegisterIncomingProducts;
 
 public static class RegisterIncomingProductsEndpoint
 {
     [WolverinePost("/warehouse/incoming-products")]
-    public static async Task<(IResult, IStorageAction<WarehouseProduct>[], WarehouseStockUpdated[])> RegisterIncomingProducts(
+    public static async Task<IResult> RegisterIncomingProducts(
         RegisterIncomingProductsCommand command,
         WarehouseDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
         if (command.Items == null || !command.Items.Any())
         {
-            return (Results.BadRequest("No products specified"), 
-                   Array.Empty<IStorageAction<WarehouseProduct>>(),
-                   Array.Empty<WarehouseStockUpdated>());
+            return Results.BadRequest("No products specified");
         }
 
         var productCatalogIds = command.Items.Select(i => i.ProductCatalogId).ToList();
@@ -29,9 +26,8 @@ public static class RegisterIncomingProductsEndpoint
             .Where(wp => productCatalogIds.Contains(wp.ProductCatalogId))
             .ToDictionaryAsync(wp => wp.ProductCatalogId, cancellationToken);
 
-        var storageActions = new List<IStorageAction<WarehouseProduct>>();
-        var domainEvents = new List<WarehouseStockUpdated>();
         var errors = new List<string>();
+        var updatedProducts = new List<WarehouseProduct>();
 
         foreach (var item in command.Items)
         {
@@ -50,9 +46,7 @@ public static class RegisterIncomingProductsEndpoint
             try
             {
                 warehouseProduct.AddStock(item.Quantity);
-                storageActions.Add(Storage.Update(warehouseProduct));
-                
-                domainEvents.AddRange(warehouseProduct.DomainEvents.OfType<WarehouseStockUpdated>());
+                updatedProducts.Add(warehouseProduct);
             }
             catch (Exception ex)
             {
@@ -62,13 +56,12 @@ public static class RegisterIncomingProductsEndpoint
 
         if (errors.Any())
         {
-            return (Results.BadRequest(new { Errors = errors }), 
-                   Array.Empty<IStorageAction<WarehouseProduct>>(),
-                   Array.Empty<WarehouseStockUpdated>());
+            return Results.BadRequest(new { Errors = errors });
         }
 
-        return (Results.Ok(new { Message = $"Successfully registered {command.Items.Count} incoming products" }), 
-                storageActions.ToArray(),
-                domainEvents.ToArray());
+        // Save changes directly - domain events will be published automatically
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok(new { Message = $"Successfully registered {command.Items.Count} incoming products" });
     }
 }
