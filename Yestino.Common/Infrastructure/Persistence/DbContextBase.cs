@@ -8,8 +8,8 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
 {
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        UpdateAggregateRootVersions();
         await PublishDomainEventsAsync();
+        UpdateAggregateRootVersions();
 
         return await base.SaveChangesAsync(cancellationToken);
     }
@@ -41,13 +41,6 @@ public abstract class DbContextBase(DbContextOptions options, IMessageBus bus) :
             .ToList();
 
         aggregateRoots.ForEach(e => e.ClearDomainEvents());
-
-        // update aggregate root version for optimistic concurrency checks
-        // (we assume each aggregate publishes an event on change)
-        foreach (var root in aggregateRoots)
-        {
-            root.Version = Guid.NewGuid();
-        }
 
         foreach (var domainEvent in domainEvents)
         {

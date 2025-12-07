@@ -2,22 +2,25 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Yestino.Warehouse.Infrastructure;
+using Yestino.Ordering.Infrastructure;
 
 #nullable disable
 
-namespace Yestino.Warehouse.Migrations
+namespace Yestino.Ordering.Migrations
 {
-    [DbContext(typeof(WarehouseDbContext))]
-    partial class WarehouseDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(OrderingDbContext))]
+    [Migration("20251201012201_OrderingMigration")]
+    partial class OrderingMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("warehouse")
+                .HasDefaultSchema("ordering")
                 .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("WolverineEnabled", "true");
@@ -116,51 +119,58 @@ namespace Yestino.Warehouse.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Yestino.Warehouse.Entities.WarehouseProduct", b =>
+            modelBuilder.Entity("Yestino.Ordering.Application.ProductReadModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Description")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasDefaultValue("");
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("LastStockUpdate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("ProductCatalogId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ReservedQuantity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("StockQuantity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
+                        .HasColumnType("integer");
 
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductReadModels", "ordering");
+                });
+
+            modelBuilder.Entity("Yestino.Ordering.Domain.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomerAddress")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTimeOffset?>("ShippedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("Version")
                         .IsConcurrencyToken()
@@ -168,14 +178,56 @@ namespace Yestino.Warehouse.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("IX_WarehouseProducts_IsActive");
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Orders_Status");
 
-                    b.HasIndex("ProductCatalogId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_WarehouseProducts_ProductCatalogId");
+                    b.HasIndex("TrackingNumber")
+                        .HasDatabaseName("IX_Orders_TrackingNumber");
 
-                    b.ToTable("WarehouseProducts", "warehouse");
+                    b.ToTable("Orders", "ordering");
+                });
+
+            modelBuilder.Entity("Yestino.Ordering.Domain.OrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItem", "ordering");
+                });
+
+            modelBuilder.Entity("Yestino.Ordering.Domain.OrderItem", b =>
+                {
+                    b.HasOne("Yestino.Ordering.Domain.Order", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Yestino.Ordering.Domain.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

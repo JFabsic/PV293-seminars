@@ -9,7 +9,8 @@ namespace Yestino.Ordering;
 
 public static class DependencyInjection
 {
-    public static WebApplicationBuilder AddOrderingModule(this WebApplicationBuilder builder)
+
+    public static WebApplicationBuilder AddOrderingModule(this WebApplicationBuilder builder, List<Assembly> moduleAssemblies)
     {
         moduleAssemblies.Add(typeof(OrderingDbContext).Assembly);
         
